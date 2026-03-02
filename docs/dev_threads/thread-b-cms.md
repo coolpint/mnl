@@ -31,6 +31,7 @@
 - `2026-03-02`: Thread-B CMS는 Wagtail 단일 트랙으로 운영하고 `apps/cms`(Next 스켈레톤) 의존을 중단한다.
 - `2026-03-02`: AI draft intake 포맷은 `external_id/headline/body` 필수 + `intent(writing|desk_review)`로 고정한다.
 - `2026-03-02`: Render 배포 시작 단계에서 `bootstrap_cms_reporter_user`를 실행해 기자 계정을 `reporter` 권한으로 강제한다.
+- `2026-03-02`: `scourt` Teams 최종 리포트는 AI 재작성 프롬프트를 적용한 뒤 CMS intake로 `writing` 초안 적재를 기본 경로로 한다.
 
 ### Assumptions
 - `2026-03-02`: Thread-A 상태머신(`writing -> desk_review -> approved/scheduled -> published`)을 변경 없이 참조한다.
@@ -41,6 +42,7 @@
 - `2026-03-02`: Thread-D 연동 계약은 `docs/contracts/CMS_WEB_HANDOFF.md`를 기준으로 동기화한다.
 - `2026-03-02`: Thread-C는 AI 생성 결과를 CMS intake API 계약(`REQ-20260302-07`)에 맞춰 송신한다.
 - `2026-03-02`: 배포 환경(Render)에서 `CMS_REPORTER_*` 환경변수로 기자 계정 자격증명을 관리하고 주기적으로 비밀번호를 교체한다.
+- `2026-03-02`: `scourt` 원문/요약 품질 편차를 고려해 1차 업로드는 `writing` 상태로만 적재하고 사람 검토 후 `desk_review`로 올린다.
 
 ### Risks
 - `2026-03-02`: UI 권한 가드만으로는 우회 호출을 막을 수 없어 승인 게이트가 무력화될 수 있다.
@@ -53,6 +55,8 @@
   - 대응: intake JSON 스키마를 단일 계약으로 문서화하고 변경은 master 승인 절차로 관리한다.
 - `2026-03-02`: `CMS_REPORTER_PASSWORD` 미설정 상태로 운영되면 기본 비밀번호가 적용되어 계정 탈취 위험이 커질 수 있다.
   - 대응: Render 대시보드에서 `CMS_REPORTER_PASSWORD`를 즉시 설정/회전하고 배포 후 로그인 검증을 수행한다.
+- `2026-03-02`: AI 재작성 단계에서 보도자료 범위를 벗어난 해석/추정이 과도하게 들어갈 위험이 있다.
+  - 대응: 프롬프트에 직접 인용/사실 왜곡 금지 규칙을 고정하고, 초기 운영은 `writing` 단계 수동 데스킹을 필수화한다.
 
 ## Master Escalation Rule
 - 아래 변경은 반드시 `master/MASTER_INBOX.md`에 `OPEN`으로 등록:

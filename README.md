@@ -97,6 +97,25 @@ curl -X POST 'http://localhost:8000/api/v1/newsroom/intake/ai-draft/' \
 - `writing`: 데스킹 요청 전 상태
 - `desk_review`: 데스킹 큐로 바로 투입
 
+## scourt 리포트 -> CMS 초안 업로드
+팀즈 전송용 `scourt` 최종 리포트를 AI로 기사체 재작성한 뒤 CMS intake로 업로드할 수 있다.
+
+필수 환경변수:
+- `OPENAI_API_KEY`
+- `CMS_AI_INTAKE_TOKEN`
+
+실행 예시:
+```bash
+cd apps/cms-wagtail
+. .venv/bin/activate
+python manage.py import_scourt_reports \
+  --db-path /Users/air/codes/scourt/data/scourt_news.db \
+  --cms-base-url http://localhost:8000/api/v1/newsroom \
+  --reporter-username 판결소식 \
+  --intent writing \
+  --limit 3
+```
+
 ## Current Phase
 - Phase 1 in progress: web + Wagtail CMS backend
 - Backend workflow/API and portal adapters integration in progress

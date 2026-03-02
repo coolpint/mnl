@@ -67,6 +67,28 @@ Result:
 - `201` created
 - `200` idempotent replay (same `external_id`)
 
+## scourt -> CMS draft import (rewrite then intake)
+`scourt` DB의 Teams 최종 리포트를 AI로 기사체 재작성한 뒤 CMS 초안으로 적재한다.
+
+Required env vars:
+- `OPENAI_API_KEY`
+- `CMS_AI_INTAKE_TOKEN`
+
+Example:
+```bash
+python manage.py import_scourt_reports \
+  --db-path /Users/air/codes/scourt/data/scourt_news.db \
+  --cms-base-url http://localhost:8000/api/v1/newsroom \
+  --reporter-username 판결소식 \
+  --intent writing \
+  --limit 3
+```
+
+Dry run:
+```bash
+python manage.py import_scourt_reports --dry-run --limit 1
+```
+
 ## Policy guards included
 - Published article `slug` immutability.
 - `L1/L2/L3` required on published updates.

@@ -18,6 +18,7 @@
 - Wagtail 도입에 따른 원본 데이터 경계는 `REQ-20260302-05` master 결정으로 확정한다.
 - AI 초안 유입은 `POST /api/v1/newsroom/intake/ai-draft/` 계약(v1)으로 고정하고 master(`REQ-20260302-08`)에서 관리한다.
 - Render 배포 시작 커맨드에서 `bootstrap_cms_reporter_user`를 실행해 기자 계정을 `reporter` 권한으로 유지한다.
+- `scourt` Teams 리포트는 `import_scourt_reports` 커맨드로 AI 재작성 후 `writing` 초안으로 유입한다.
 
 ## 제외 범위
 - 독자용 웹 렌더링
