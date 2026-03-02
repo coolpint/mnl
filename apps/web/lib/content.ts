@@ -213,6 +213,7 @@ export function absoluteArticleUrl(slug: string): string {
 type CmsArticlePayload = {
   id: string;
   slug: string;
+  status?: string;
   headline: string;
   subheadline?: string;
   summary?: string;
@@ -241,6 +242,7 @@ function normalizeCmsApiBase(value: string | undefined): string {
 }
 
 const CMS_API_BASE_URL = normalizeCmsApiBase(process.env.CMS_API_BASE_URL);
+const PUBLIC_WORKFLOW_STATUSES = new Set(["published", "published_updated"]);
 
 function toSection(value: string): SectionKey {
   if (value === "economy" || value === "society" || value === "policy") {
@@ -263,8 +265,15 @@ function toReporterId(value?: string): string {
   return value;
 }
 
+function isPublicCmsArticle(payload: CmsArticlePayload): boolean {
+  if (payload.status) {
+    return PUBLIC_WORKFLOW_STATUSES.has(payload.status);
+  }
+  return Boolean(payload.publishedAt);
+}
+
 function normalizeCmsArticle(payload: CmsArticlePayload): Article {
-  const publishedAt = payload.publishedAt || new Date().toISOString();
+  const publishedAt = payload.publishedAt || payload.updatedAt || new Date().toISOString();
   const updatedAt = payload.updatedAt || publishedAt;
 
   return {
@@ -286,34 +295,40 @@ function normalizeCmsArticle(payload: CmsArticlePayload): Article {
   };
 }
 
-async function fetchCmsArticles(limit = 100): Promise<Article[]> {
+async function fetchCmsArticles(limit = 100): Promise<Article[] | null> {
   if (!CMS_API_BASE_URL) {
-    return [];
+    return null;
   }
 
   try {
-    const response = await fetch(`${CMS_API_BASE_URL}/articles/?limit=${limit}`, {
-      next: { revalidate: 60 }
-    });
+    let response = await fetch(
+      `${CMS_API_BASE_URL}/articles/?status=published,published_updated&limit=${limit}`,
+      {
+        next: { revalidate: 60 }
+      }
+    );
     if (!response.ok) {
-      return [];
+      response = await fetch(`${CMS_API_BASE_URL}/articles/?limit=${limit}`, {
+        next: { revalidate: 60 }
+      });
+    }
+    if (!response.ok) {
+      return null;
     }
 
     const data = (await response.json()) as { items?: CmsArticlePayload[] };
-    if (!data.items || data.items.length === 0) {
-      return [];
-    }
-    return data.items.map(normalizeCmsArticle).sort((left, right) => {
+    const publicItems = (data.items ?? []).filter(isPublicCmsArticle);
+    return publicItems.map(normalizeCmsArticle).sort((left, right) => {
       return new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime();
     });
   } catch {
-    return [];
+    return null;
   }
 }
 
 export async function resolveAllArticles(): Promise<Article[]> {
   const remote = await fetchCmsArticles();
-  if (remote.length > 0) {
+  if (remote !== null) {
     return remote;
   }
   return getAllArticles();
@@ -325,9 +340,12 @@ export async function resolveArticleBySlug(slug: string): Promise<Article | unde
       const response = await fetch(`${CMS_API_BASE_URL}/articles/${slug}/`, {
         next: { revalidate: 60 }
       });
+      if (response.status === 404) {
+        return undefined;
+      }
       if (response.ok) {
         const data = (await response.json()) as { item?: CmsArticlePayload };
-        if (data.item) {
+        if (data.item && isPublicCmsArticle(data.item)) {
           return normalizeCmsArticle(data.item);
         }
       }
