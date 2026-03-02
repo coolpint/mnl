@@ -5,7 +5,7 @@ services:
     plan: free
     rootDir: apps/cms-wagtail
     buildCommand: pip install . && python manage.py collectstatic --noinput
-    startCommand: python manage.py migrate && gunicorn mnl_cms.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: python manage.py migrate && python manage.py bootstrap_cms_rbac && python manage.py bootstrap_cms_reporter_user --username "${CMS_REPORTER_USERNAME:-reporter}" --email "${CMS_REPORTER_EMAIL:-reporter@moneynlaw.local}" --password "${CMS_REPORTER_PASSWORD:-ChangeMe123!}" && gunicorn mnl_cms.wsgi:application --bind 0.0.0.0:$PORT
     healthCheckPath: /api/v1/newsroom/articles/?limit=1
     envVars:
       - key: PYTHON_VERSION
@@ -22,3 +22,9 @@ services:
         sync: false
       - key: WAGTAILADMIN_BASE_URL
         sync: false
+      - key: CMS_REPORTER_USERNAME
+        value: reporter
+      - key: CMS_REPORTER_EMAIL
+        value: reporter@moneynlaw.local
+      - key: CMS_REPORTER_PASSWORD
+        generateValue: true

@@ -18,6 +18,7 @@ python manage.py makemigrations newsroom
 python manage.py migrate
 python manage.py bootstrap_cms_rbac
 python manage.py bootstrap_cms_site
+python manage.py bootstrap_cms_reporter_user --username reporter --password 'ChangeMe123!'
 python manage.py bootstrap_cms_demo_users --password 'ChangeMe123!'
 ```
 4. Create an admin user and run server:
@@ -100,10 +101,26 @@ sqlite3 db.sqlite3 ".tables" | tr ' ' '\n' | rg '^newsroom_'
 - `DJANGO_ALLOWED_HOSTS=.onrender.com`
 - `DJANGO_CSRF_TRUSTED_ORIGINS=https://*.onrender.com`
 - `DJANGO_SECRET_KEY`: auto generated
+- `CMS_REPORTER_USERNAME=reporter`
+- `CMS_REPORTER_EMAIL=reporter@moneynlaw.local`
+- `CMS_REPORTER_PASSWORD`: auto generated
 
-### First-run bootstrap (Render Shell)
+### Reporter account bootstrap
+Render start command runs these automatically on each deploy:
 ```bash
+python manage.py migrate
 python manage.py bootstrap_cms_rbac
+python manage.py bootstrap_cms_reporter_user ...
+```
+
+Default fallback credentials if `CMS_REPORTER_PASSWORD` is unset:
+```text
+username: reporter
+password: ChangeMe123!
+```
+
+### Optional first-run bootstrap (Render Shell)
+```bash
 python manage.py bootstrap_cms_site
 python manage.py createsuperuser
 ```

@@ -12,6 +12,13 @@
 - 엠바고/예약발행/예약취소/긴급수정
 - 기사 검색/카테고리/기자 페이지 메타 관리
 
+## 구현 트랙 (2026-03-02 업데이트)
+- Thread-B CMS 서버 구현은 `apps/cms-wagtail`을 기준으로 진행한다.
+- 기존 `apps/cms`(Next 스켈레톤) 의존은 제거하고 Wagtail 단일 트랙으로 운영한다.
+- Wagtail 도입에 따른 원본 데이터 경계는 `REQ-20260302-05` master 결정으로 확정한다.
+- AI 초안 유입은 `POST /api/v1/newsroom/intake/ai-draft/` 계약(v1)으로 고정하고 master(`REQ-20260302-08`)에서 관리한다.
+- Render 배포 시작 커맨드에서 `bootstrap_cms_reporter_user`를 실행해 기자 계정을 `reporter` 권한으로 유지한다.
+
 ## 제외 범위
 - 독자용 웹 렌더링
 - 포털 전송 상세 구현
@@ -29,6 +36,7 @@
 ## API 의존성
 - Thread A API 계약 준수
 - 상태 전이 실패 시 에러 코드 표준화 (`409`, `422`)
+- Thread D 연동용 읽기 API 계약은 `docs/contracts/CMS_WEB_HANDOFF.md` 기준으로 제공
 
 ## 작업 항목
 1. RBAC 정책/미들웨어 구현

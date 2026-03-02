@@ -32,6 +32,7 @@ python manage.py makemigrations newsroom
 python manage.py migrate
 python manage.py bootstrap_cms_rbac
 python manage.py bootstrap_cms_site
+python manage.py bootstrap_cms_reporter_user --username reporter --password 'ChangeMe123!'
 python manage.py bootstrap_cms_demo_users --password 'ChangeMe123!'
 python manage.py createsuperuser
 python manage.py runserver 0.0.0.0:8000
@@ -108,11 +109,14 @@ Repository includes [`render.yaml`](./render.yaml) for `apps/cms-wagtail`.
 3. Set required env vars in Render service:
    - `DATABASE_URL` (recommended: Neon free Postgres connection string)
    - `WAGTAILADMIN_BASE_URL` (e.g. `https://<your-service>.onrender.com`)
-4. After first deploy, open Render Shell and run:
+4. Reporter bootstrap env vars (blueprint defaults):
+   - `CMS_REPORTER_USERNAME=reporter`
+   - `CMS_REPORTER_EMAIL=reporter@moneynlaw.local`
+   - `CMS_REPORTER_PASSWORD` (auto generated secret)
+5. After first deploy, open Render Shell and run:
 ```bash
-python manage.py bootstrap_cms_rbac
 python manage.py bootstrap_cms_site
 python manage.py createsuperuser
 ```
-5. Connect Web to CMS API:
+6. Connect Web to CMS API:
    - Netlify env: `CMS_API_BASE_URL=https://<your-service>.onrender.com/api/v1/newsroom`
