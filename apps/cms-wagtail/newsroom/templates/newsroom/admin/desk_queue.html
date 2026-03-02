@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>Desk Queue</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        margin: 24px;
+        color: #0f172a;
+      }
+      h1, h2 {
+        margin: 0 0 12px;
+      }
+      .meta {
+        margin-bottom: 20px;
+        color: #475569;
+      }
+      .messages {
+        margin: 0 0 20px;
+        padding: 0;
+        list-style: none;
+      }
+      .messages li {
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        background: #e2e8f0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 28px;
+      }
+      th, td {
+        border: 1px solid #cbd5e1;
+        padding: 10px;
+        vertical-align: top;
+      }
+      th {
+        background: #f8fafc;
+        text-align: left;
+      }
+      .action-form {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(140px, auto));
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .action-form input[type="text"],
+      .action-form input[type="datetime-local"] {
+        padding: 6px 8px;
+      }
+      .action-form button {
+        background: #0f172a;
+        color: #fff;
+        border: 0;
+        border-radius: 6px;
+        padding: 7px 10px;
+        cursor: pointer;
+      }
+      .audit li {
+        margin-bottom: 6px;
+      }
+      .muted {
+        color: #64748b;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CMS Desk Queue</h1>
+    <p class="meta">active role: <strong>{{ role }}</strong> | schedule input timezone: <strong>Asia/Seoul</strong></p>
+
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <table>
+      <thead>
+        <tr>
+          <th>Article</th>
+          <th>Section</th>
+          <th>Status</th>
+          <th>Reporter</th>
+          <th>Desk Editor</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td>
+              <div><strong>{{ row.article.article_id }}</strong></div>
+              <div>{{ row.article.title }}</div>
+              <div class="muted">slug: {{ row.article.slug }}</div>
+            </td>
+            <td>{{ row.article.section }}</td>
+            <td>{{ row.article.workflow_status }}</td>
+            <td>{{ row.article.reporter|default:"-" }}</td>
+            <td>{{ row.article.desk_editor|default:"-" }}</td>
+            <td>
+              {% if row.targets %}
+                {% for action in row.targets %}
+                  <form
+                    class="action-form"
+                    method="post"
+                    action="{% url 'newsroom_transition_article' row.article.id %}"
+                  >
+                    {% csrf_token %}
+                    <input type="hidden" name="target_status" value="{{ action.value }}" />
+                    <input type="text" name="note" placeholder="reason/note (optional)" />
+                    {% if action.requires_schedule %}
+                      <input type="datetime-local" name="scheduled_at" required />
+                    {% else %}
+                      <input type="datetime-local" disabled />
+                    {% endif %}
+                    <button type="submit">{{ action.label }}</button>
+                  </form>
+                {% endfor %}
+              {% else %}
+                <span class="muted">No transition available</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6">No articles yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>Audit Log (latest 30)</h2>
+    <ul class="audit">
+      {% for log in audit_logs %}
+        <li>
+          [{{ log.created_at }}] {{ log.article.article_id }}:
+          {{ log.from_status }} -> {{ log.to_status }}
+          by {{ log.actor|default:"system" }}
+        </li>
+      {% empty %}
+        <li class="muted">No audit logs yet.</li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

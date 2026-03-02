@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mnl-cms-wagtail"
+version = "0.1.0"
+description = "Wagtail CMS service for moneynlaw"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "Django>=4.2,<5.0",
+  "wagtail>=6.3,<7.0",
+  "dj-database-url>=2.2,<3.0",
+  "gunicorn>=22.0,<24.0",
+  "psycopg[binary]>=3.2,<4.0",
+  "whitenoise>=6.7,<7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3,<9.0",
+  "pytest-django>=4.11,<5.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["mnl_cms*", "newsroom*"]
+
+[tool.setuptools.package-data]
+newsroom = ["templates/**/*.html"]
