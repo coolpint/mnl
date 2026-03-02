@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Policy Watch</title>
+  <desc id="desc">Placeholder image for policy article</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#133b72" />
+      <stop offset="100%" stop-color="#2558a3" />
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)" />
+  <g fill="#ffffff" fill-opacity="0.16">
+    <circle cx="240" cy="180" r="140" />
+    <circle cx="1080" cy="540" r="210" />
+  </g>
+  <text x="90" y="370" font-family="Arial, sans-serif" font-size="84" font-weight="700" fill="#ffffff">
+    POLICY WATCH
+  </text>
+  <text x="90" y="435" font-family="Arial, sans-serif" font-size="34" fill="#dbe7ff">
+    moneynlaw mock front image
+  </text>
+</svg>

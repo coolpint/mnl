@@ -1,0 +1,19 @@
+{
+  "name": "moneynlaw",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace @mnl/web",
+    "build:web": "npm run build --workspace @mnl/web",
+    "cms:setup": "cd apps/cms-wagtail && python3 -m venv .venv && . .venv/bin/activate && pip install .",
+    "cms:run": "cd apps/cms-wagtail && . .venv/bin/activate && python manage.py runserver 0.0.0.0:8000",
+    "cms:migrate": "cd apps/cms-wagtail && . .venv/bin/activate && python manage.py migrate",
+    "cms:bootstrap-rbac": "cd apps/cms-wagtail && . .venv/bin/activate && python manage.py bootstrap_cms_rbac",
+    "cms:bootstrap-site": "cd apps/cms-wagtail && . .venv/bin/activate && python manage.py bootstrap_cms_site",
+    "cms:demo-users": "cd apps/cms-wagtail && . .venv/bin/activate && python manage.py bootstrap_cms_demo_users",
+    "cms:check": "cd apps/cms-wagtail && . .venv/bin/activate && python manage.py check"
+  }
+}

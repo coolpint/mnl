@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Market Flow</title>
+  <desc id="desc">Placeholder image for market article</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#004b44" />
+      <stop offset="100%" stop-color="#008074" />
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)" />
+  <g stroke="#ffffff" stroke-opacity="0.45" stroke-width="12" fill="none">
+    <path d="M60 520 L250 430 L420 470 L620 320 L800 360 L980 210 L1220 180" />
+  </g>
+  <text x="90" y="370" font-family="Arial, sans-serif" font-size="84" font-weight="700" fill="#ffffff">
+    MARKET FLOW
+  </text>
+  <text x="90" y="435" font-family="Arial, sans-serif" font-size="34" fill="#d8fff8">
+    moneynlaw mock front image
+  </text>
+</svg>
